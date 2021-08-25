@@ -23,6 +23,8 @@ require 'time'
   "User-Agent": 'github-actions-rubocop'
 }
 
+class GithubAPIError < StandardError; end
+
 def create_check
   body = {
     'name' => @check_name,
@@ -37,7 +39,10 @@ def create_check
 
   resp = http.post(path, body.to_json, @headers)
 
-  raise resp.message if resp.code.to_i >= 300
+  if resp.code.to_i >= 300
+    puts "[Github Create Check] Failed Posting to Github: #{resp.message}" 
+    raise GithubAPIError.new(resp.message )
+  end
 
   data = JSON.parse(resp.body)
   data['id']
@@ -59,7 +64,10 @@ def update_check(id, conclusion, output)
 
   resp = http.patch(path, body.to_json, @headers)
 
-  raise resp.message if resp.code.to_i >= 300
+  if resp.code.to_i >= 300
+    puts "[Github Update Check] Failed Posting to Github: #{resp.message}" 
+    raise GithubAPIError.new(resp.message)
+  end
 end
 
 @annotation_levels = {
@@ -112,6 +120,7 @@ def run_rubocop
 end
 
 def run
+  puts "Running Rubocop"
   id = create_check
   begin
     results = run_rubocop
@@ -119,11 +128,8 @@ def run
     output = results['output']
 
     update_check(id, conclusion, output)
-
-    raise if conclusion == 'failure'
-  rescue StandardError
-    update_check(id, 'failure', nil)
-    raise
+    #update_check(id, 'failure', nil) if conclusion == 'failure'
+  rescue GithubAPIError
   end
 end
 

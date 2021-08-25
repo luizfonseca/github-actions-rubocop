@@ -131,17 +131,17 @@ end
 
 def run
   puts "\nStarting Rubocop..."
-  puts "CHANGED FILES: #{ENV['CHANGED_FILES']}"
-  id = create_check
-  begin
-    results = run_rubocop
-    conclusion = results['conclusion']
-    output = results['output']
+  puts "CHANGED FILES of commit: #{ENV['CHANGED_FILES']}"
 
-    update_check(id, conclusion, output)
-    update_check(id, 'failure', nil) if conclusion == 'failure'
-  rescue GithubAPIError
-  end
+  id = create_check
+  results = run_rubocop
+  conclusion = results['conclusion']
+  output = results['output']
+
+  puts "Results:\n\n#{output.inspect}"
+
+  update_check(id, conclusion, output)
+  update_check(id, 'failure', nil) if conclusion == 'failure'
 end
 
 run

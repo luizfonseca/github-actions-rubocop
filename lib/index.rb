@@ -49,6 +49,7 @@ def create_check
 end
 
 def update_check(id, conclusion, output)
+  puts "[#{id}] Updating check #{conclusion}"
   body = {
     'name' => @check_name,
     'head_sha' => @GITHUB_SHA,
@@ -87,6 +88,7 @@ def run_rubocop
   conclusion = 'success'
   count = 0
 
+  puts "Files with errors: #{errors['files'].map{|f| f['path'].join(", ")}}"
   errors['files'].each do |file|
     path = file['path']
     offenses = file['offenses']

@@ -84,7 +84,7 @@ def run_rubocop
   errors = nil
   changed_files = JSON.parse(ENV['CHANGED_FILES']).join(" ")
 
-  if changed_files.any?
+  if changed_files.length > 0
     puts "Running rubocop on these files: #{changed_files}"
     Dir.chdir(@GITHUB_WORKSPACE) do
       # only run rubocop on changes files

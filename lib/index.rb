@@ -88,7 +88,7 @@ def run_rubocop
   conclusion = 'success'
   count = 0
 
-  puts "Files with errors: #{errors['files'].map{|f| f['path'].join(", ")}}"
+  puts "Files with errors: #{errors['files'].map{|f| f['path']}.join(", ")}"
   errors['files'].each do |file|
     path = file['path']
     offenses = file['offenses']

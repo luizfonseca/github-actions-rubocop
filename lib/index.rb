@@ -123,6 +123,7 @@ end
 
 def run
   puts "Running Rubocop"
+  puts "CHANGED FILES: #{ENV['CHANGED_FILES']}"
   id = create_check
   begin
     results = run_rubocop

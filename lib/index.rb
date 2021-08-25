@@ -83,35 +83,41 @@ def run_rubocop
   annotations = []
   errors = nil
   changed_files = JSON.parse(ENV['CHANGED_FILES']).join(" ")
-  Dir.chdir(@GITHUB_WORKSPACE) do
-    # only run rubocop on changes files
-    errors = JSON.parse(`rubocop --format json #{changed_files}`)
-  end
-  conclusion = 'success'
-  count = 0
 
-  puts "Files with errors: #{errors['files'].map{|f| f['path']}.join(", ")}"
-  errors['files'].each do |file|
-    path = file['path']
-    offenses = file['offenses']
-
-    offenses.each do |offense|
-      severity = offense['severity']
-      message = offense['message']
-      location = offense['location']
-      annotation_level = @annotation_levels[severity]
-      count += 1
-
-      conclusion = 'failure' if annotation_level == 'failure'
-
-      annotations.push(
-        'path' => path,
-        'start_line' => location['start_line'],
-        'end_line' => location['start_line'],
-        "annotation_level": annotation_level,
-        'message' => message
-      )
+  if changed_files.any?
+    puts "Running rubocop on these files: #{changed_files}"
+    Dir.chdir(@GITHUB_WORKSPACE) do
+      # only run rubocop on changes files
+      errors = JSON.parse(`rubocop --format json #{changed_files}`)
     end
+    conclusion = 'success'
+    count = 0
+
+    puts "Files with errors: #{errors['files'].map{|f| f['path']}.join(", ")}"
+    errors['files'].each do |file|
+      path = file['path']
+      offenses = file['offenses']
+
+      offenses.each do |offense|
+        severity = offense['severity']
+        message = offense['message']
+        location = offense['location']
+        annotation_level = @annotation_levels[severity]
+        count += 1
+
+        conclusion = 'failure' if annotation_level == 'failure'
+
+        annotations.push(
+          'path' => path,
+          'start_line' => location['start_line'],
+          'end_line' => location['start_line'],
+          "annotation_level": annotation_level,
+          'message' => message
+        )
+      end
+    end
+  else
+    puts "No new files to run rubocop on, exiting..."
   end
 
   output = {
@@ -124,7 +130,7 @@ def run_rubocop
 end
 
 def run
-  puts "Running Rubocop"
+  puts "\nStarting Rubocop..."
   puts "CHANGED FILES: #{ENV['CHANGED_FILES']}"
   id = create_check
   begin
@@ -133,7 +139,7 @@ def run
     output = results['output']
 
     update_check(id, conclusion, output)
-    #update_check(id, 'failure', nil) if conclusion == 'failure'
+    update_check(id, 'failure', nil) if conclusion == 'failure'
   rescue GithubAPIError
   end
 end

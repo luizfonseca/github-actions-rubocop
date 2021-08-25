@@ -82,8 +82,10 @@ end
 def run_rubocop
   annotations = []
   errors = nil
+  changed_files = JSON.parse(ENV['CHANGED_FILES']).join(" ")
   Dir.chdir(@GITHUB_WORKSPACE) do
-    errors = JSON.parse(`rubocop --format json`)
+    # only run rubocop on changes files
+    errors = JSON.parse(`rubocop --format json #{changed_files}`)
   end
   conclusion = 'success'
   count = 0

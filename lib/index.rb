@@ -86,6 +86,7 @@ def run_rubocop
   count = 0
   # find out where this diverged from master
   merge_base = `git merge-base --fork-point origin/master`
+  puts "Merge base with origin/master #{merge_base}"
   # only care about modified ruby files since diverge from master
   changed_files = `git diff --name-only #{merge_base}`.split("\n")
 

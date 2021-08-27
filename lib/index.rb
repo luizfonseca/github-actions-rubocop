@@ -82,8 +82,10 @@ end
 def run_rubocop
   annotations = []
   errors = nil
+  conclusion = 'success'
+  count = 0
   # find out where this diverged from master
-  merge_base = `git merge-base --fork-point master`
+  merge_base = `git merge-base --fork-point origin/master`
   # only care about modified ruby files since diverge from master
   changed_files = `git diff --name-only #{merge_base}`.split("\n")
 
@@ -93,8 +95,6 @@ def run_rubocop
       # only run rubocop on changes files
       errors = JSON.parse(`rubocop --format json #{changed_files}`)
     end
-    conclusion = 'success'
-    count = 0
 
     errors['files'].each do |file|
       path = file['path']
@@ -133,7 +133,6 @@ end
 
 def run
   puts "\nStarting Rubocop..."
-  puts "CHANGED FILES of commit: #{ENV['CHANGED_FILES']}"
 
   id = create_check
   results = run_rubocop

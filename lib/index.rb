@@ -82,7 +82,10 @@ end
 def run_rubocop
   annotations = []
   errors = nil
-  changed_files = JSON.parse(ENV['CHANGED_FILES']).join(" ")
+  # find out where this diverged from master
+  merge_base = `git merge-base --fork-point master`
+  # only care about modified ruby files since diverge from master
+  changed_files = `git diff --name-only #{merge_base}`.split("\n")
 
   if changed_files.length > 0
     puts "Running rubocop on these files: #{changed_files}"

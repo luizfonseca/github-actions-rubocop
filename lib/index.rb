@@ -84,18 +84,13 @@ def run_rubocop
   errors = nil
   conclusion = 'success'
   count = 0
-  # find out where this diverged from master
-  merge_base = `git merge-base --fork-point origin/master`
-  puts "Merge base with origin/master #{merge_base}"
-  # only care about modified ruby files since diverge from master
-  #changed_files = `git diff --name-only #{merge_base}`.split("\n")
 
   # changed files of commit
   puts `git log -n 2`
   current_commit,previous_commit = `git log -n 2 --format=format:%H`.split("\n")
   changed_files = `git diff --name-only #{current_commit}..#{previous_commit}`.split("\n")
+  puts "Modified files of this commit: \n#{changed_files}\n"
   changed_files.delete_if{ |filename| filename[-3..-1] != '.rb' }
-  
 
   if changed_files.length > 0
     puts "Running rubocop on these files: #{changed_files}"
@@ -127,7 +122,7 @@ def run_rubocop
       end
     end
   else
-    puts "No new files to run rubocop on, exiting..."
+    puts "No new ruby files to run rubocop on, exiting..."
   end
 
   output = {

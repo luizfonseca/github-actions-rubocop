@@ -88,7 +88,12 @@ def run_rubocop
   merge_base = `git merge-base --fork-point origin/master`
   puts "Merge base with origin/master #{merge_base}"
   # only care about modified ruby files since diverge from master
-  changed_files = `git diff --name-only #{merge_base}`.split("\n")
+  #changed_files = `git diff --name-only #{merge_base}`.split("\n")
+
+  # changed files of commit
+  changed_files = `git diff --name-only HEAD HEAD~1`.split("\n")
+  changed_files.delete_if{ |filename| filename[-3..-1] != '.rb' }
+  
 
   if changed_files.length > 0
     puts "Running rubocop on these files: #{changed_files}"

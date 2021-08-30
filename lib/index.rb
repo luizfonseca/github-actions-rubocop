@@ -91,7 +91,8 @@ def run_rubocop
   #changed_files = `git diff --name-only #{merge_base}`.split("\n")
 
   # changed files of commit
-  changed_files = `git diff --name-only HEAD HEAD~1`.split("\n")
+  current_commit,previous_commit = `git log -n 2 --format=format:%H`.split("\n")
+  changed_files = `git diff --name-only #{current_commit}..#{previous_commit}`.split("\n")
   changed_files.delete_if{ |filename| filename[-3..-1] != '.rb' }
   
 

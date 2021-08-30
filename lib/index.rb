@@ -86,10 +86,9 @@ def run_rubocop
   count = 0
 
   # changed files of commit
-  puts `git log -n 2`
   current_commit,previous_commit = `git log -n 2 --format=format:%H`.split("\n")
   changed_files = `git diff --name-only #{current_commit}..#{previous_commit}`.split("\n")
-  puts "Modified files of this commit: \n#{changed_files}\n"
+  puts "Modified files of this commit: \n#{changed_files.join("\n")}\n"
   changed_files.delete_if{ |filename| filename[-3..-1] != '.rb' }
 
   if changed_files.length > 0

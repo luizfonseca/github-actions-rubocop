@@ -1,4 +1,4 @@
-FROM ruby:3.2.0
+FROM ruby:3.2-bullseye
 RUN apk add --no-cache --update build-base linux-headers git
 
 LABEL com.github.actions.name="Rubocop Code Checks"

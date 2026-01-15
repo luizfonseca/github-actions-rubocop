@@ -11,10 +11,10 @@ Lint your Ruby code in parallel to your builds.
 
 ## How it works
 - A Dockerfile with the following gems runs a `rubocop` check on your codebase using:
-  - rubocop -v 1.63.4
-  - rubocop-rspec -v 2.29.2
-  - rubocop-performance -v 1.21.0
-  - rubocop-rails -v 2.24.1
+  - rubocop -v 1.82.1
+  - rubocop-rspec -v 3.9.0
+  - rubocop-performance -v 1.26.1
+  - rubocop-rails -v 2.34.3
 - Errors are then reported per-line on the PR's checks tab.
 
 
@@ -36,7 +36,7 @@ require:
 
 
 ## Supported Ruby versions
-- Ruby 3+ (older versions are supported on *<=1.5.6 versions of this action*)
+- Ruby 4+ (Ruby 3.x is supported on *2.0.0 versions of this action*, older versions are supported on *<=1.5.6 versions of this action*)
 
 
 ![](screenshots/annotations.png)
